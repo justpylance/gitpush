@@ -1,0 +1,2 @@
+first text
+second(third)
