@@ -22,9 +22,12 @@ def csv_dict_reader(file_obj,):
         
         x = 0
         
-        for line in reader:                        
-                link = line['Link']
-                title = line['Title']
+        for line in reader:
+                title = ''
+                link = str(line['Link'])
+                try:
+                        title = str(line['Title'])
+                except: title = ''
                 x+=1
                 if x > 2:
                         break
@@ -42,19 +45,29 @@ def main():
                 new =getlist(getsoup('https://freelancehunt.com/projects?skills%5B%5D=169'))
                 with open("output1.csv") as f_obj:
                         new =getlist(getsoup('https://freelancehunt.com/projects?skills%5B%5D=169'))
-
                         old =csv_dict_reader(f_obj)
                 
                 
                         if str(old['link']) != new['link'] :
                                 if 'парсер' in new['title'] or 'парсинга' in new['title'] or 'Парсинга' in new['title'] or 'Парсер' in new['title'] :
                                         print('send message')
-                                        r = requests.post('https://sms.ru/sms/send?api_id=[E325F3FD-C904-4BCC-441E-925BDF6DD189]&to=79601198159&msg=''Найден+проект: '+str(new['title'])+'.'+'Ссылка на проект: '+str(new['link'])+'&json=1')
+                                        r = requests.post('https://sms.ru/sms/send?api_id=[E325F3FD-C904-4BCC-441E-925BDF6DD189]&to=79601198159&msg=''Найден+проект: '+str(new['link'])+'&json=1')
+                                else:
+                                	x = new['title'].split(' ')
+                                	n = 0
+                                	for j in x:
+                                		if 'Парсинг' in j or 'парсинг' in j:
+                                			n+=1
+                                	if n>1:
+                                		r = requests.post('https://sms.ru/sms/send?api_id=[E325F3FD-C904-4BCC-441E-925BDF6DD189]&to=79601198159&msg=''Найден+проект: '+str(new['link'])+'&json=1')
+
+
                                 with open('output1.csv','w')as file:
                                         writer = csv.writer(file, delimiter=';', lineterminator='\n')
                                         writer.writerow(('Title','Link'))
-                                        writer.writerow((new['title'],new['link']))
-                        else:pass#print('ne-a')
+                                        writer.writerow((str(new['title']),new['link']))
+                        else:
+                                pass#print('ne-a')
                 time.sleep(100)
 
         
