@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="index.css">
+	<title>
+			{% block title %}
+
+			{% endblock %} | Flask app
+	</title>
+</head>
+<body>
+
+<div class="contain">
+	<ul display=inline>
+		<li><span class="button"><a href=" {{ url_for('index') }}  ">Flask</a></span></li>
+		<li><span class="button"><a href=" {{ url_for('posts.index')}}  ">Blog</a></span></li>
+		<li><span class="button"><a href="#">Link</a></span></li>
+		<form>
+			<li><span class="button"><input type="text" name="search"></span></li>
+
+			<li><span><input type="submit" name="send"></span></li>
+		</form>
+	</ul>
+</div>
+
+<div class="content">
+
+	{% block content   %}
+	{% endblock  %}
+
+</div>
+<h2>{% block content_title  %}
+	{% endblock  %}</h2>
+</body>
+</html>
