@@ -1,0 +1,121 @@
+body{
+	margin: 0;
+	padding: 0;
+}
+
+a{
+	text-decoration: none;
+}
+
+.detail{
+	width: 400px;
+	height: 200px;
+	border-radius: 8px;
+	background:#FFFFFF; 
+}
+
+.detail h2{
+	border-bottom : 0.3px solid #B6B8B2;
+}
+
+.contain{
+ 	width: 100%;
+}
+
+.contain ul {
+
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    
+}
+
+.contain ul #tab,#search {
+    float: left;
+}
+
+.contain ul #sign {
+   float: right; 
+}
+
+
+.contain ul li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+#tab  a:hover {
+    background-color: #111 ;}
+
+#search{
+	display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none
+}
+
+.content{
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 900px;
+	background: #B6B8B2;
+	
+	
+}
+
+.content div{
+	padding: 5px;
+}
+
+
+.post{
+	
+	background: #E7EAED;
+	width: 450px;
+	height: 150px;
+	margin-top: 20px;
+	margin-left: 20px;
+	padding: 5px;
+	border:0.1px solid black;
+	border-radius: 10px;
+}
+
+
+
+.post .title{
+	position: absolute;
+	width: 400px;
+	font-size: 16px;
+	margin: 5px;
+	white-space: nowrap; /* Отменяем перенос текста */
+    overflow: hidden; /* Обрезаем содержимое */
+    
+    text-overflow: ellipsis; /* Многоточие */
+}
+
+
+
+.post  .body{
+	margin-top:7px; 
+	margin-bottom: 5px; 
+  	
+ 	height: 88px; 
+  	overflow: hidden; 
+  	text-align: justify; 
+    text-overflow: ellipsis; /* Многоточие */
+    border-bottom : 0.3px solid #B6B8B2;
+
+}
+
+.post > .datetime{
+float: right;	
+padding: 0;
+}

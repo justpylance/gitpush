@@ -5,9 +5,26 @@
 {% endblock %}
 
 {% block content_title %}
-	Blueprint index page
+	Postss
 {% endblock %}
 
 {% block content %}
-	Blueprint some content
+	{% for post in posts %}
+
+	
+		<div class="post">
+		
+			<div class="title"><strong><em><a href="{{url_for('posts.post_detail',slug=post.slug)}}" style="text-decoration: none;color: black">{{post.title}}</a></em></strong></div>
+			<br>
+		
+			<div class="body">{{post.body}}</div>
+			<div class="datetime">{{post.created}}</div>
+
+
+		</div>
+
+
+
+	{% endfor %}
+
 {% endblock %}

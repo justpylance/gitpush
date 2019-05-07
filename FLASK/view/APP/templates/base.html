@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<link rel="stylesheet" type="text/css" href="index.css">
+	
+	<link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
 	<title>
 			{% block title %}
 
@@ -11,25 +12,29 @@
 <body>
 
 <div class="contain">
-	<ul display=inline>
-		<li><span class="button"><a href=" {{ url_for('index') }}  ">Flask</a></span></li>
-		<li><span class="button"><a href=" {{ url_for('posts.index')}}  ">Blog</a></span></li>
-		<li><span class="button"><a href="#">Link</a></span></li>
-		<form>
-			<li><span class="button"><input type="text" name="search"></span></li>
+<ul>
+  <li id ='tab'><a href=" {{ url_for('index') }}">Flask</a></li>
+  <li id ='tab'><a href="{{ url_for('posts.index')}}">Blog</a></li>
+  <li id ='tab'><a href="#">Link</a></li>
+  <li id='search'><input type="text" name="s"></li>
+  <li class="sign" id='tab'><a href="">Sign up</a></li>
+  <li class="sign" id="tab"><a href="">Sign in</a></li>
+</ul>
 
-			<li><span><input type="submit" name="send"></span></li>
-		</form>
-	</ul>
+	
 </div>
 
+
+<!-- <h2>{% block content_title  %}
+	{% endblock  %}</h2>  -->
 <div class="content">
 
 	{% block content   %}
-	{% endblock  %}
 
+	{% endblock  %}
 </div>
-<h2>{% block content_title  %}
-	{% endblock  %}</h2>
+
+
+
 </body>
 </html>
