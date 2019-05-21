@@ -17,7 +17,12 @@ for url in urls:
 	for ul in lists[:-1]:
 		#print(ul)
 		lis = ul.find_all('li')
-		more_inf += '<h3>'+ lis[0].get_text() + '</h3> <ul>' 
+
+		more_inf += '<h3>'+ lis[0].get_text() + '</h3> <ul>'
+		if 'Пакеты' in str(lis[0]):
+			#packages = 
+			more_inf = ''
+			
 		for li in lis[1:]:
 			#print(li)
 			more_inf += str(li)
