@@ -24,7 +24,7 @@ def get_complect(cars_urls,cars_options):
         cars_options = []
 
         
-        for url in cars_urls[:2]:
+        for url in cars_urls[:3]:
                 time.sleep(1)
                 r = requests.get(url)
                 soup = BeautifulSoup(r.text,'lxml')
@@ -37,29 +37,84 @@ def get_complect(cars_urls,cars_options):
                 except:
                         pass
 
-                for elem in table_urls[:1]:
+                for elem in table_urls:
                         car_dict = {}
                         r = requests.get(elem)
                         soup = BeautifulSoup(r.text, 'lxml')
+                        
                         car_dict['mod'] = soup.find('div',class_='block1').find('h1').get_text()
                         car_dict['table_id'] = ''
-                        car_dict['url'] = ('https://shoferoff.ru/datsun/'+elem.split('audi/')[-1].split('/')[0] + car_dict['mod'].split('›')[-1]).replace(' ','-')
+                        print(car_dict['mod'])
+                        car_dict['url'] = ('https://shoferoff.ru/bmw/'+elem.split('bmw/')[-1].split('/')[0] + car_dict['mod'].split('›')[-1]).replace(' ','-')
                         car_dict['title'] = car_dict['mod'].split('›')[0]
                         car_dict['description'] = soup.find('div', class_='table_eq').find_all('div')[0].find('a').find_all('span')[0].get_text() + ' ' +soup.find('div', class_='table_eq').find_all('div')[0].find('a').find_all('span')[1].get_text() 
                         car_dict['donor'] = elem
                         #car_dict['table_id'] = 
-                        car_dict['price'] = soup.find('div',class_='price_kompl').find('span', class_='price_kompl_cena').get_text()
-                        car_dict['packages']
+                        car_dict['price'] = soup.find('div',class_='price_kompl').find('span', class_='price_kompl_cena').get_text().encode('utf-8').decode()
+                        
                         lists = soup.find_all('ul', class_='komplektatsiya')
 
-                        for ul in lists[:-1]:
+
+
+                        car_dict['safe'] = ''
+                        car_dict['design'] = ''
+                        car_dict['interior'] = ''
+                        car_dict['packages'] = ''
+                        for ul in lists:
                         #print(ul)
                             lis = ul.find_all('li')
-
-                            more_inf += '<h3>'+ lis[0].get_text() + '</h3> <ul>'
-                            if 'Пакеты' in str(lis[0]):
-                                packages =  more_inf.replace('<ul>', '')
+                            if 'Безопасность' in str(lis[0]):
+                                safe =  '<h3>' + lis[0].get_text() + '</h3><ul>'
                                 for li in lis[1:]:
+                                        safe+= str(li)
+                                safe+='</ul>'
+                                car_dict['safe'] = safe.encode('utf-8').decode() #('cp1251').decode("utf-8", "ignore")  #   'Дизайн'
+
+                            if 'Дизайн' in str(lis[0]):
+                                design =  '<h3>' + lis[0].get_text() + '</h3><ul>'
+                                for li in lis[1:]:
+                                        design+= str(li)
+                                design+='</ul>'
+                                car_dict['design'] = design.encode('utf-8').decode()#('cp1251').decode("utf-8", "ignore") #Интерьер 
+                            if 'Интерьер' in str(lis[0]):
+                                interior =  '<h3>' + lis[0].get_text() + '</h3><ul>'
+                                for li in lis[1:]:
+                                        interior+= str(li)
+                                interior+='</ul>'
+                                car_dict['interior'] = interior.encode('utf-8').decode()#('cp1251').decode("utf-8", "ignore") #Интерьер
+                        
+                        
+
+
+
+                            
+
+                            
+                            if 'Пакеты' in str(lis[0].get_text()):
+
+                                    packages =  '<h3>' + lis[0].get_text() + '</h3>'
+                                    for li in lis[1:]:
+                                                #if len(li.find_all('span'))
+                                            if ':' in li.get_text():
+                                                packages+=' [su_service title=\"'+   str(li.get_text()).replace(str(li.find('span',class_='dop_price').get_text()),'').split(':')[0]  +'\" icon="icon: plus-circle" icon_color="#ffd64f"] ' +  ' [/su_service]'  # '[su_note note_color="#fff9d4"]280 000 руб.[/su_note]'
+                                                pack =  str(li.get_text()).replace(str(li.find('span',class_='dop_price').get_text()),'').split(':')[-1].split('+')
+                                                packages += '<ul>'
+                                                for p in pack:
+                                                        packages += '<li>' + str(p) +'</li>'
+                                                packages+='</ul>'
+                                                packages += '[su_note note_color="#fff9d4"]' + li.find('span',class_='dop_price').get_text() +'[/su_note]'
+                                                #.encode('cp1251')
+                                                
+                                                
+
+                                            else:
+                                                packages+= ' [su_service title=\"'+str(li.get_text()).replace(str(li.find('span',class_='dop_price').get_text()),'')  +'\" icon="icon: plus-circle" icon_color="#ffd64f"] '  +  ' [/su_service]' + '[su_note note_color="#fff9d4"]' + li.find('span',class_='dop_price').get_text() +'[/su_note]'
+                                    car_dict['packages'] = packages
+                                    #print(car_dict['packages'])
+                                    
+                                        
+
+
                                     
 
 
@@ -68,14 +123,11 @@ def get_complect(cars_urls,cars_options):
                             
                             
                                             
-                            for li in lis[1:]:
-                                            #print(li)
-                                more_inf += str(li)
-                                more_inf += '</ul>'
-                            print(more_inf)
+                            
+                            
 
                         cars_options.append(car_dict)
-                        print('+')
+                        #print('+')
                         #print(car_dict['price'])
 
 
@@ -91,7 +143,7 @@ def get_complect(cars_urls,cars_options):
 
 def main():
         
-        url = 'http://carsdo.ru/audi/'
+        url = 'http://carsdo.ru/bmw/'
         cars_urls = get_car_urls(url)
         
         cars_options = []
@@ -121,7 +173,7 @@ def main():
                 writer.writerow(('Donor_Link','shoferoff_Link','Modification', 'Image_url', 'table_id','safe','design','interior' ,'price', 'packages', 'title', 'description' ))
                 for elem in cars_options:
                         
-                        writer.writerow((elem['donor'],elem['url'],elem['mod'], 'Image_url', 'table_id',elem['safe'],elem['design'] ,elem['interior'] , 'price', elem['packages'], elem['title'], elem['description'] ))
+                        writer.writerow((elem['donor'],elem['url'],elem['mod'], 'Image_url', 'table_id',elem['safe'],elem['design'] ,elem['interior'] , elem['price'], elem['packages'], elem['title'], elem['description'] ))
                         
 
                #.encode().decode('utf-8', 'ignore') 
