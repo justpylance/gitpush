@@ -5,7 +5,7 @@ import requests
 from selenium import webdriver
 
 
-
+cars = 'audi'
 
 
 def get_car_urls(url):
@@ -20,11 +20,11 @@ def get_car_urls(url):
                 cars_urls.append(url)
         return(cars_urls)
 
-def get_complect(cars_urls,cars_options):
+def get_complect(cars_urls,cars_options,cr):
         cars_options = []
 
         
-        for url in cars_urls[:3]:
+        for url in cars_urls:
                 time.sleep(1)
                 r = requests.get(url)
                 soup = BeautifulSoup(r.text,'lxml')
@@ -45,7 +45,7 @@ def get_complect(cars_urls,cars_options):
                         car_dict['mod'] = soup.find('div',class_='block1').find('h1').get_text()
                         car_dict['table_id'] = ''
                         print(car_dict['mod'])
-                        car_dict['url'] = ('https://shoferoff.ru/bmw/'+elem.split('bmw/')[-1].split('/')[0] + car_dict['mod'].split('›')[-1]).replace(' ','-')
+                        car_dict['url'] = ('https://shoferoff.ru/'+str(cr)+'/'+elem.split(str(cr)+'/')[-1].split('/')[0] + car_dict['mod'].split('›')[-1]).replace(' ','-')
                         car_dict['title'] = car_dict['mod'].split('›')[0]
                         car_dict['description'] = soup.find('div', class_='table_eq').find_all('div')[0].find('a').find_all('span')[0].get_text() + ' ' +soup.find('div', class_='table_eq').find_all('div')[0].find('a').find_all('span')[1].get_text() 
                         car_dict['donor'] = elem
@@ -66,22 +66,29 @@ def get_complect(cars_urls,cars_options):
                             if 'Безопасность' in str(lis[0]):
                                 safe =  '<h3>' + lis[0].get_text() + '</h3><ul>'
                                 for li in lis[1:]:
-                                        safe+= str(li)
+                                        
+                                        safe+= '<li>' + li.get_text()+'</li>'
                                 safe+='</ul>'
-                                car_dict['safe'] = safe.encode('utf-8').decode() #('cp1251').decode("utf-8", "ignore")  #   'Дизайн'
+                                car_dict['safe'] = safe.replace('（', '(').replace('）',')').replace('×','')#.encode('utf-8').decode() #('cp1251').decode("utf-8", "ignore")  #   'Дизайн'
 
                             if 'Дизайн' in str(lis[0]):
                                 design =  '<h3>' + lis[0].get_text() + '</h3><ul>'
+                                
                                 for li in lis[1:]:
-                                        design+= str(li)
+                                                
+                                        '''except:
+                                                print('+++')'''
+                                        
+                                        
+                                        design+= '<li>' + li.get_text()+'</li>'
                                 design+='</ul>'
-                                car_dict['design'] = design.encode('utf-8').decode()#('cp1251').decode("utf-8", "ignore") #Интерьер 
+                                car_dict['design'] = design.replace('（', '(').replace('）',')').replace('×','')#.encode('utf-8').decode()#('cp1251').decode("utf-8", "ignore") #Интерьер 
                             if 'Интерьер' in str(lis[0]):
                                 interior =  '<h3>' + lis[0].get_text() + '</h3><ul>'
                                 for li in lis[1:]:
-                                        interior+= str(li)
+                                        interior+= '<li>' + li.get_text()+'</li>'
                                 interior+='</ul>'
-                                car_dict['interior'] = interior.encode('utf-8').decode()#('cp1251').decode("utf-8", "ignore") #Интерьер
+                                car_dict['interior'] = interior.replace('（', '(').replace('）',')').replace('×','')#.encode('utf-8').decode()#('cp1251').decode("utf-8", "ignore") #Интерьер
                         
                         
 
@@ -109,7 +116,7 @@ def get_complect(cars_urls,cars_options):
 
                                             else:
                                                 packages+= ' [su_service title=\"'+str(li.get_text()).replace(str(li.find('span',class_='dop_price').get_text()),'')  +'\" icon="icon: plus-circle" icon_color="#ffd64f"] '  +  ' [/su_service]' + '[su_note note_color="#fff9d4"]' + li.find('span',class_='dop_price').get_text() +'[/su_note]'
-                                    car_dict['packages'] = packages
+                                    car_dict['packages'] = packages.replace('（', '(').replace('）',')').replace('×','')
                                     #print(car_dict['packages'])
                                     
                                         
@@ -141,13 +148,13 @@ def get_complect(cars_urls,cars_options):
 
 
 
-def main():
+def main(cr):
         
-        url = 'http://carsdo.ru/bmw/'
+        url = 'http://carsdo.ru/'+str(cr) +'/'
         cars_urls = get_car_urls(url)
         
         cars_options = []
-        cars_options = get_complect(cars_urls,cars_options)
+        cars_options = get_complect(cars_urls,cars_options,cr)
         ###get_cars_options(cars_options,table_urls)
 
         '''
@@ -168,17 +175,27 @@ def main():
                 driver.get('https://shoferoff.ru/wp-admin/admin.php?page=tablepress&s=audi')
         ''' 
 
-        with open('BMW.csv','a+')as file:
+        with open(str(cr)+'.csv','a+')as file:
                 writer = csv.writer(file, delimiter=';', lineterminator='\n')
                 writer.writerow(('Donor_Link','shoferoff_Link','Modification', 'Image_url', 'table_id','safe','design','interior' ,'price', 'packages', 'title', 'description' ))
                 for elem in cars_options:
-                        
-                        writer.writerow((elem['donor'],elem['url'],elem['mod'], 'Image_url', 'table_id',elem['safe'],elem['design'] ,elem['interior'] , elem['price'], elem['packages'], elem['title'], elem['description'] ))
-                        
-
+                        try:
+                                writer.writerow((elem['donor'],elem['url'],elem['mod'], 'Image_url', 'table_id',elem['safe'],elem['design'] ,elem['interior'] , elem['price'], elem['packages'], elem['title'], elem['description'] ))
+                        except:
+                                print('error csv')
+                                '''print(elem['donor'])
+                                writer.writerow((elem['safe']))
+                                print(elem['design'])
+                                
+                                for x in elem['design']:
+                                        try:
+                                                writer.writerow((x))
+                                        except:
+                                                print(x)
+                                '''
                #.encode().decode('utf-8', 'ignore') 
                         
 
 
 if __name__ == '__main__':
-        main()
+        main(cars.lower())
