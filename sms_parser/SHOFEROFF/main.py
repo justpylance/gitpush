@@ -5,7 +5,7 @@ import requests
 from selenium import webdriver
 
 
-cars = 'audi'
+cars = 'bmw'
 
 
 def get_car_urls(url):
@@ -18,6 +18,7 @@ def get_car_urls(url):
                 url = 'http://carsdo.ru' + elem.find('a',class_='model_auto_a').get('href')
                 
                 cars_urls.append(url)
+
         return(cars_urls)
 
 def get_complect(cars_urls,cars_options,cr):
@@ -33,22 +34,31 @@ def get_complect(cars_urls,cars_options,cr):
                         mod_urls = soup.find('ul',id='complete').find_all('li')
                         for mod in mod_urls:
                                 murl = 'http://carsdo.ru' +mod.find('a').get('href')
-                                table_urls.append(murl)
+                                table_urls.append({'url':murl,'name':mod.find('a').find_all('span')[0]})
                 except:
                         pass
-
+                #print(table_urls)
+                last_elem = ''
+                last_k = 1
                 for elem in table_urls:
                         car_dict = {}
-                        r = requests.get(elem)
+                        r = requests.get(elem['url'])
                         soup = BeautifulSoup(r.text, 'lxml')
                         
                         car_dict['mod'] = soup.find('div',class_='block1').find('h1').get_text()
                         car_dict['table_id'] = ''
-                        print(car_dict['mod'])
-                        car_dict['url'] = ('https://shoferoff.ru/'+str(cr)+'/'+elem.split(str(cr)+'/')[-1].split('/')[0] + car_dict['mod'].split('›')[-1]).replace(' ','-')
+                        #print(car_dict['mod'])
+                        car_dict['url'] = ('https://shoferoff.ru/'+str(cr)+'/'+elem['url'].split(str(cr)+'/')[-1].split('/')[0] + car_dict['mod'].split('›')[-1]).replace(' ','-')
+                        if last_elem == elem['name']:
+                        	last_k+=1 
+                        	car_dict['url'] = car_dict['url'] +'-' + str(last_k)
+                        else:
+                        	last_k = 1
+                        last_elem = elem['name']
+                        print(car_dict['url'])
                         car_dict['title'] = car_dict['mod'].split('›')[0]
                         car_dict['description'] = soup.find('div', class_='table_eq').find_all('div')[0].find('a').find_all('span')[0].get_text() + ' ' +soup.find('div', class_='table_eq').find_all('div')[0].find('a').find_all('span')[1].get_text() 
-                        car_dict['donor'] = elem
+                        car_dict['donor'] = elem['url']
                         #car_dict['table_id'] = 
                         car_dict['price'] = soup.find('div',class_='price_kompl').find('span', class_='price_kompl_cena').get_text().encode('utf-8').decode()
                         
