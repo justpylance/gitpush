@@ -1,5 +1,5 @@
 Для запуска каждого скрипта .py вам нужно:
-1. Установить python: https://www.python.org/downloads/release/python-352/
+1. Установить python: https://www.python.org/downloads/release/python-352/ (При установке оставьте галочку add to path)
 2. Установить нужные модули: csv, time, bs4, requests,selenium
 Для их установки просто зайдите в свой терминал и пропишите для кажого модуля:
 				pip install csv
